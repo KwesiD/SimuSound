@@ -9,6 +9,7 @@ class SetupWindow(QDialog):
 	def __init__(self, parent=None):
 		super(SetupWindow, self).__init__(parent)
 		self.setWindowTitle("Setup")
+		self.parent = parent
 
 		importHelperText = """ """
 		self.importButton = QPushButton("Import Settings")

@@ -5,12 +5,16 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 import requests
 from setup_menu import *
+from display import *
 
 class MainMenu(QDialog):
 
 	def __init__(self, parent=None):
 		super(MainMenu, self).__init__(parent)
 		self.setWindowTitle("SimuSound")
+		self.parent = parent
+
+		self.mapper = {}
 
 		self.welcomeLabel = QLabel("Welcome!")
 		self.welcomeLabel.setAlignment(Qt.AlignCenter)
@@ -42,9 +46,13 @@ class MainMenu(QDialog):
 		self.setupButton.clicked.connect(self.openSetup)
 		self.setupButton.setFixedSize(QSize(80, 75))
 
-		
+		self.startButton = QPushButton("Start")
+		self.startButton.clicked.connect(self.openUSMenu)
+		self.startButton.setFixedSize(QSize(80, 75))
+
 		self.buttonLayout = QHBoxLayout()
 		self.buttonLayout.addWidget(self.setupButton)
+		self.buttonLayout.addWidget(self.startButton)
 
 		self.mainLayout.addLayout(self.buttonLayout)
 		self.setLayout(self.mainLayout)
@@ -68,6 +76,26 @@ class MainMenu(QDialog):
 	def openSetup(self):
 		setup = SetupWindow(self)
 		setup.show()
+
+	def openUSMenu(self):
+		if not checkConnection():
+			msg = QMessageBox()
+			msg.setIcon(QMessageBox.Critical)
+			msg.setText("Error")
+			msg.setInformativeText("Probe Not Connected!")
+			msg.setWindowTitle("Error")
+			msg.exec_()
+		elif self.mapper == {}:
+			msg = QMessageBox()
+			msg.setIcon(QMessageBox.Critical)
+			msg.setText("Error")
+			msg.setInformativeText("Please create or load settings before starting.")
+			msg.setWindowTitle("Error")
+			msg.exec_()
+		else:
+			ultrasound = USDisplay(self.mapper,self)
+			ultrasound.show()
+			
 
 
 	# def openUrl(self):
